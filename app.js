@@ -59,6 +59,9 @@ const WMO_CODES = {
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
+let currentMode = "hourly";
+let weatherData = null;
+
 function getWeatherInfo(code) {
   return WMO_CODES[code] || { desc: "Desconocido", icon: "❓" };
 }
@@ -71,74 +74,124 @@ function windDirection(deg) {
 function buildApiUrl() {
   const lats = CITIES.map(c => c.lat).join(",");
   const lons = CITIES.map(c => c.lon).join(",");
-  return `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=America/Argentina/Buenos_Aires&forecast_days=7`;
+  return `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}` +
+    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m` +
+    `&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max` +
+    `&timezone=America/Argentina/Buenos_Aires&forecast_days=7`;
+}
+
+function getCurrentHourIndex(hourlyTimes) {
+  const now = new Date();
+  let closest = 0;
+  let minDiff = Infinity;
+  for (let i = 0; i < hourlyTimes.length; i++) {
+    const diff = Math.abs(new Date(hourlyTimes[i]).getTime() - now.getTime());
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = i;
+    }
+  }
+  return closest;
+}
+
+function renderHourly(data) {
+  const hourly = data.hourly;
+  const startIdx = getCurrentHourIndex(hourly.time);
+  const count = 48; // next 48 hours
+  let html = '<div class="forecast-hourly">';
+
+  for (let i = startIdx; i < Math.min(startIdx + count, hourly.time.length); i++) {
+    const dt = new Date(hourly.time[i]);
+    const hour = dt.getHours();
+    const isNow = i === startIdx;
+    const label = isNow ? "Ahora" : `${hour}h`;
+    const dayBoundary = hour === 0 && !isNow;
+    const w = getWeatherInfo(hourly.weather_code[i]);
+    const precip = hourly.precipitation_probability[i];
+    const wind = Math.round(hourly.wind_speed_10m[i]);
+
+    let dayLabel = "";
+    if (dayBoundary) {
+      dayLabel = DAY_NAMES[dt.getDay()];
+    }
+
+    html += `<div class="hour-slot${isNow ? " now" : ""}">`;
+    if (dayLabel) {
+      html += `<span class="hour-time" style="color:var(--warm);font-size:0.6rem">${dayLabel}</span>`;
+    }
+    html += `<span class="hour-time">${label}</span>`;
+    html += `<span class="hour-icon">${w.icon}</span>`;
+    html += `<span class="hour-temp">${Math.round(hourly.temperature_2m[i])}°</span>`;
+    html += `<span class="hour-precip">${precip > 0 ? precip + "%" : ""}</span>`;
+    html += `<span class="hour-wind">${wind} km/h</span>`;
+    html += `</div>`;
+  }
+
+  html += "</div>";
+  return html;
+}
+
+function renderDaily(data) {
+  const daily = data.daily;
+  let html = '<div class="forecast-daily">';
+
+  for (let i = 0; i < daily.time.length; i++) {
+    const dt = new Date(daily.time[i] + "T12:00:00");
+    const dayName = i === 0 ? "Hoy" : DAY_NAMES[dt.getDay()];
+    const w = getWeatherInfo(daily.weather_code[i]);
+    const precip = daily.precipitation_probability_max[i];
+
+    html += `<div class="daily-row">`;
+    html += `<span class="daily-day">${dayName}</span>`;
+    html += `<span class="daily-icon">${w.icon}</span>`;
+    html += `<span class="daily-precip">${precip > 0 ? precip + "% lluvia" : ""}</span>`;
+    html += `<span class="daily-temps"><span class="hi">${Math.round(daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(daily.temperature_2m_min[i])}°</span></span>`;
+    html += `</div>`;
+  }
+
+  html += "</div>";
+  return html;
 }
 
 function renderCard(city, data, index) {
   const current = data.current;
-  const daily = data.daily;
   const weather = getWeatherInfo(current.weather_code);
-  const todayMax = daily.temperature_2m_max[0];
-  const todayMin = daily.temperature_2m_min[0];
-
-  let forecastHtml = "";
-  for (let i = 1; i < daily.time.length; i++) {
-    const date = new Date(daily.time[i] + "T12:00:00");
-    const dayName = DAY_NAMES[date.getDay()];
-    const fw = getWeatherInfo(daily.weather_code[i]);
-    const precip = daily.precipitation_probability_max[i];
-    const precipText = precip > 0 ? `${precip}% lluvia` : "";
-
-    forecastHtml += `
-      <div class="forecast-day">
-        <span class="forecast-day-name">${dayName}</span>
-        <span class="forecast-day-icon">${fw.icon}</span>
-        <span class="forecast-day-precip">${precipText}</span>
-        <span class="forecast-day-temps">
-          <span class="hi">${Math.round(daily.temperature_2m_max[i])}°</span>
-          <span class="lo">${Math.round(daily.temperature_2m_min[i])}°</span>
-        </span>
-      </div>`;
-  }
+  const forecast = currentMode === "hourly" ? renderHourly(data) : renderDaily(data);
 
   return `
-    <div class="city-card" id="card-${index}">
-      <div class="card-current" onclick="toggleCard(${index})">
-        <div class="card-header">
-          <span class="city-name">${city.name}</span>
-          <span class="weather-icon">${weather.icon}</span>
-        </div>
-        <div class="temp-main">${Math.round(current.temperature_2m)}<span class="unit">°C</span></div>
-        <div class="weather-desc">${weather.desc} &middot; ST ${Math.round(current.apparent_temperature)}°</div>
-        <div class="card-details">
-          <div class="detail">
-            <div class="detail-label">Min / Máx</div>
-            <div class="detail-value temp-range"><span class="lo">${Math.round(todayMin)}°</span> / <span class="hi">${Math.round(todayMax)}°</span></div>
-          </div>
-          <div class="detail">
-            <div class="detail-label">Humedad</div>
-            <div class="detail-value">${current.relative_humidity_2m}%</div>
-          </div>
-          <div class="detail">
-            <div class="detail-label">Viento</div>
-            <div class="detail-value">${Math.round(current.wind_speed_10m)} km/h ${windDirection(current.wind_direction_10m)}</div>
+    <div class="city-card">
+      <div class="card-current">
+        <span class="current-icon">${weather.icon}</span>
+        <div class="current-info">
+          <div class="city-name">${city.name}</div>
+          <div class="current-meta">${weather.desc} · ST ${Math.round(current.apparent_temperature)}°</div>
+          <div class="current-details">
+            <span>💧 ${current.relative_humidity_2m}%</span>
+            <span>💨 ${Math.round(current.wind_speed_10m)} km/h ${windDirection(current.wind_direction_10m)}</span>
           </div>
         </div>
+        <div class="current-temp">${Math.round(current.temperature_2m)}<span class="unit">°C</span></div>
       </div>
-      <div class="expand-hint" onclick="toggleCard(${index})">
-        <span class="arrow">▼</span> Pronóstico 6 días
-      </div>
-      <div class="card-forecast">
-        <div class="forecast-days">
-          <div class="forecast-title">Próximos días</div>
-          ${forecastHtml}
-        </div>
-      </div>
+      <div class="card-forecast">${forecast}</div>
     </div>`;
 }
 
-function toggleCard(index) {
-  document.getElementById(`card-${index}`).classList.toggle("expanded");
+function renderAll() {
+  if (!weatherData) return;
+  const citiesEl = document.getElementById("cities");
+  let html = "";
+  for (let i = 0; i < CITIES.length; i++) {
+    html += renderCard(CITIES[i], weatherData[i], i);
+  }
+  citiesEl.innerHTML = html;
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("btn-hourly").classList.toggle("active", mode === "hourly");
+  document.getElementById("btn-daily").classList.toggle("active", mode === "daily");
+  renderAll();
 }
 
 async function loadWeather() {
@@ -154,16 +207,8 @@ async function loadWeather() {
     const res = await fetch(buildApiUrl());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const results = await res.json();
-
-    // Open-Meteo returns an array when multiple locations are queried
-    const dataArray = Array.isArray(results) ? results : [results];
-
-    let html = "";
-    for (let i = 0; i < CITIES.length; i++) {
-      html += renderCard(CITIES[i], dataArray[i], i);
-    }
-
-    citiesEl.innerHTML = html;
+    weatherData = Array.isArray(results) ? results : [results];
+    renderAll();
     loadingEl.classList.add("hidden");
   } catch (err) {
     console.error("Error fetching weather:", err);

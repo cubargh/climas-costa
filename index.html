@@ -19,6 +19,13 @@
   </header>
 
   <main>
+    <div class="controls">
+      <div class="toggle-switch">
+        <button id="btn-hourly" class="toggle-btn active" onclick="setMode('hourly')">Por hora</button>
+        <button id="btn-daily" class="toggle-btn" onclick="setMode('daily')">Por día</button>
+      </div>
+    </div>
+
     <div id="loading" class="loading">
       <div class="spinner"></div>
       <p>Cargando datos meteorológicos...</p>
