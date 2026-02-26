@@ -188,7 +188,7 @@ function renderHourly(data) {
     html += `<span class="hour-time">${label}</span>`;
     html += `<span class="hour-icon">${w.icon}</span>`;
     html += `<span class="hour-temp">${Math.round(hourly.temperature_2m[i])}°</span>`;
-    html += `<span class="hour-precip">${precip > 0 ? precip + "%" : ""}</span>`;
+    html += `<span class="hour-precip">${precip}%</span>`;
     html += `<span class="hour-wind">${wind} km/h</span>`;
     html += `</div>`;
   }
@@ -210,7 +210,7 @@ function renderDaily(data) {
     html += `<div class="daily-row">`;
     html += `<span class="daily-day">${dayName}</span>`;
     html += `<span class="daily-icon">${w.icon}</span>`;
-    html += `<span class="daily-precip">${precip > 0 ? precip + "% lluvia" : ""}</span>`;
+    html += `<span class="daily-precip">${precip}%</span>`;
     html += `<span class="daily-temps"><span class="hi">${Math.round(daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(daily.temperature_2m_min[i])}°</span></span>`;
     html += `</div>`;
   }
