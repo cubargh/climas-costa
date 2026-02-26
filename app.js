@@ -60,7 +60,10 @@ const WMO_CODES = {
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 let currentMode = "hourly";
+let currentView = "map";
 let weatherData = null;
+let map = null;
+let mapMarkers = [];
 
 function getWeatherInfo(code) {
   return WMO_CODES[code] || { desc: "Desconocido", icon: "❓" };
@@ -81,6 +84,67 @@ function buildApiUrl() {
     `&timezone=America/Argentina/Buenos_Aires&forecast_days=7`;
 }
 
+// --- Map ---
+
+function initMap() {
+  if (map) return;
+  map = L.map("map-container", {
+    zoomControl: true,
+    attributionControl: true,
+  }).setView([-37.8, -58.5], 8);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 16,
+  }).addTo(map);
+}
+
+function renderMap() {
+  if (!weatherData) return;
+  initMap();
+
+  // Clear existing markers
+  mapMarkers.forEach(m => map.removeLayer(m));
+  mapMarkers = [];
+
+  for (let i = 0; i < CITIES.length; i++) {
+    const city = CITIES[i];
+    const current = weatherData[i].current;
+    const daily = weatherData[i].daily;
+    const w = getWeatherInfo(current.weather_code);
+    const temp = Math.round(current.temperature_2m);
+
+    const icon = L.divIcon({
+      className: "",
+      html: `<div class="map-marker">
+        <span class="map-marker-icon">${w.icon}</span>
+        <span class="map-marker-temp">${temp}°</span>
+      </div>`,
+      iconSize: null,
+      iconAnchor: [30, 15],
+    });
+
+    const popup = `<div class="map-popup">
+      <div class="popup-name">${city.name}</div>
+      <div class="popup-desc">${w.icon} ${w.desc}</div>
+      <dl class="popup-details">
+        <dt>Temperatura</dt><dd>${temp}°C</dd>
+        <dt>Sensación</dt><dd>${Math.round(current.apparent_temperature)}°C</dd>
+        <dt>Min / Máx</dt><dd>${Math.round(daily.temperature_2m_min[0])}° / ${Math.round(daily.temperature_2m_max[0])}°</dd>
+        <dt>Humedad</dt><dd>${current.relative_humidity_2m}%</dd>
+        <dt>Viento</dt><dd>${Math.round(current.wind_speed_10m)} km/h ${windDirection(current.wind_direction_10m)}</dd>
+      </dl>
+    </div>`;
+
+    const marker = L.marker([city.lat, city.lon], { icon })
+      .bindPopup(popup, { maxWidth: 220 })
+      .addTo(map);
+    mapMarkers.push(marker);
+  }
+}
+
+// --- List view ---
+
 function getCurrentHourIndex(hourlyTimes) {
   const now = new Date();
   let closest = 0;
@@ -98,7 +162,7 @@ function getCurrentHourIndex(hourlyTimes) {
 function renderHourly(data) {
   const hourly = data.hourly;
   const startIdx = getCurrentHourIndex(hourly.time);
-  const count = 48; // next 48 hours
+  const count = 48;
   let html = '<div class="forecast-hourly">';
 
   for (let i = startIdx; i < Math.min(startIdx + count, hourly.time.length); i++) {
@@ -177,7 +241,7 @@ function renderCard(city, data, index) {
     </div>`;
 }
 
-function renderAll() {
+function renderList() {
   if (!weatherData) return;
   const citiesEl = document.getElementById("cities");
   let html = "";
@@ -187,29 +251,54 @@ function renderAll() {
   citiesEl.innerHTML = html;
 }
 
+// --- View switching ---
+
+function setView(view) {
+  currentView = view;
+  const mapEl = document.getElementById("map-container");
+  const listEl = document.getElementById("cities");
+  const forecastToggle = document.getElementById("forecast-toggle");
+
+  document.getElementById("btn-view-map").classList.toggle("active", view === "map");
+  document.getElementById("btn-view-list").classList.toggle("active", view === "list");
+
+  if (view === "map") {
+    mapEl.classList.remove("hidden");
+    listEl.classList.add("hidden");
+    forecastToggle.classList.add("hidden");
+    renderMap();
+    // Leaflet needs a nudge after becoming visible
+    setTimeout(() => map && map.invalidateSize(), 100);
+  } else {
+    mapEl.classList.add("hidden");
+    listEl.classList.remove("hidden");
+    forecastToggle.classList.remove("hidden");
+    renderList();
+  }
+}
+
 function setMode(mode) {
   currentMode = mode;
   document.getElementById("btn-hourly").classList.toggle("active", mode === "hourly");
   document.getElementById("btn-daily").classList.toggle("active", mode === "daily");
-  renderAll();
+  renderList();
 }
 
 async function loadWeather() {
   const loadingEl = document.getElementById("loading");
   const errorEl = document.getElementById("error");
-  const citiesEl = document.getElementById("cities");
 
   loadingEl.classList.remove("hidden");
   errorEl.classList.add("hidden");
-  citiesEl.innerHTML = "";
+  document.getElementById("cities").innerHTML = "";
 
   try {
     const res = await fetch(buildApiUrl());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const results = await res.json();
     weatherData = Array.isArray(results) ? results : [results];
-    renderAll();
     loadingEl.classList.add("hidden");
+    setView(currentView);
   } catch (err) {
     console.error("Error fetching weather:", err);
     loadingEl.classList.add("hidden");

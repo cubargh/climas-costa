@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Climas de la Costa - Buenos Aires</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,6 +22,10 @@
   <main>
     <div class="controls">
       <div class="toggle-switch">
+        <button id="btn-view-map" class="toggle-btn active" onclick="setView('map')">Mapa</button>
+        <button id="btn-view-list" class="toggle-btn" onclick="setView('list')">Lista</button>
+      </div>
+      <div class="toggle-switch" id="forecast-toggle">
         <button id="btn-hourly" class="toggle-btn active" onclick="setMode('hourly')">Por hora</button>
         <button id="btn-daily" class="toggle-btn" onclick="setMode('daily')">Por día</button>
       </div>
@@ -33,13 +38,15 @@
     <div id="error" class="error hidden">
       <p>Error al cargar los datos. <button onclick="loadWeather()">Reintentar</button></p>
     </div>
-    <div id="cities" class="cities-grid"></div>
+    <div id="map-container" class="map-container"></div>
+    <div id="cities" class="cities-grid hidden"></div>
   </main>
 
   <footer>
     <p>Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> &middot; Climas de la Costa</p>
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
