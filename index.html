@@ -3,19 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Climas de la Costa - Buenos Aires</title>
+  <title>Clima de la Costa | Pronóstico en la costa de Buenos Aires</title>
+  <link rel="canonical" href="https://climadelacosta.com.ar/">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <meta name="description" content="Clima actual y pronóstico extendido de todas las ciudades costeras de la provincia de Buenos Aires.">
+
+  <!-- SEO -->
+  <meta name="description" content="Clima de la costa atlántica de Buenos Aires. Pronóstico actual y extendido por hora y por día de Mar del Plata, Pinamar, Villa Gesell, Necochea, San Bernardo y todas las ciudades costeras.">
+  <meta name="keywords" content="clima de la costa, clima costa atlantica, clima mar del plata, clima pinamar, clima villa gesell, clima necochea, clima san bernardo, clima monte hermoso, clima miramar, pronóstico costa buenos aires, temperatura costa atlantica, tiempo en la costa">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Clima de la Costa">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Clima de la Costa - Buenos Aires">
+  <meta property="og:description" content="Pronóstico actual y extendido de todas las ciudades costeras de Buenos Aires. Mar del Plata, Pinamar, Villa Gesell, Necochea, y más.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://climadelacosta.com.ar/">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:site_name" content="Clima de la Costa">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Clima de la Costa - Buenos Aires">
+  <meta name="twitter:description" content="Pronóstico actual y extendido de todas las ciudades costeras de Buenos Aires.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Clima de la Costa",
+    "url": "https://climadelacosta.com.ar/",
+    "description": "Clima actual y pronóstico extendido de todas las ciudades costeras de la provincia de Buenos Aires.",
+    "inLanguage": "es-AR"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Clima de la Costa",
+    "url": "https://climadelacosta.com.ar/",
+    "applicationCategory": "WeatherApplication",
+    "operatingSystem": "All",
+    "description": "Pronóstico del clima por hora y por día de las ciudades de la costa atlántica de Buenos Aires: Mar del Plata, Pinamar, Villa Gesell, Necochea, San Bernardo, Monte Hermoso, Miramar, Cariló y más.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "ARS"
+    }
+  }
+  </script>
 </head>
 <body>
   <header>
     <div class="header-content">
-      <h1>Climas de la Costa</h1>
-      <p class="subtitle">Provincia de Buenos Aires</p>
+      <h1>Clima de la Costa</h1>
+      <p class="subtitle">Costa atlántica de Buenos Aires</p>
     </div>
   </header>
 
@@ -31,19 +78,24 @@
       </div>
     </div>
 
-    <div id="loading" class="loading">
+    <section id="loading" class="loading" aria-label="Cargando">
       <div class="spinner"></div>
       <p>Cargando datos meteorológicos...</p>
-    </div>
-    <div id="error" class="error hidden">
+    </section>
+    <section id="error" class="error hidden" aria-label="Error">
       <p>Error al cargar los datos. <button onclick="loadWeather()">Reintentar</button></p>
-    </div>
-    <div id="map-container" class="map-container"></div>
-    <div id="cities" class="cities-grid hidden"></div>
+    </section>
+    <section id="map-container" class="map-container" aria-label="Mapa del clima de la costa"></section>
+    <section id="cities" class="cities-grid hidden" aria-label="Pronóstico por ciudad"></section>
+
+    <article class="seo-content">
+      <h2>Clima en la costa atlántica de Buenos Aires</h2>
+      <p>Consultá el pronóstico del tiempo en todas las ciudades de la costa atlántica bonaerense. Temperatura actual, sensación térmica, humedad, viento y probabilidad de lluvia por hora y por día en <strong>Mar del Plata</strong>, <strong>Pinamar</strong>, <strong>Villa Gesell</strong>, <strong>Cariló</strong>, <strong>Necochea</strong>, <strong>San Bernardo</strong>, <strong>Monte Hermoso</strong>, <strong>Miramar</strong>, <strong>Mar de Ajó</strong>, <strong>Santa Teresita</strong>, <strong>San Clemente del Tuyú</strong>, <strong>Las Toninas</strong>, <strong>Valeria del Mar</strong>, <strong>Mar de las Pampas</strong>, <strong>Claromecó</strong> y más.</p>
+    </article>
   </main>
 
   <footer>
-    <p>Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> &middot; Climas de la Costa</p>
+    <p>Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> &middot; Clima de la Costa</p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

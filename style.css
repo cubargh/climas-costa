@@ -433,6 +433,30 @@ footer a {
   text-decoration: underline;
 }
 
+/* SEO content */
+.seo-content {
+  max-width: 800px;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.seo-content h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.seo-content p {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.seo-content strong {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   header h1 {
