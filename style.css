@@ -457,6 +457,53 @@ footer a {
   font-weight: 600;
 }
 
+/* Mobile ad banner */
+.mobile-ad-banner {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .mobile-ad-banner {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  }
+
+  .ad-close {
+    position: absolute;
+    top: -28px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 1.2rem;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+
+  .ad-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Prevent content from being hidden behind the ad */
+  footer {
+    padding-bottom: 5rem;
+  }
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   header h1 {
