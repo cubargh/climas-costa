@@ -245,6 +245,22 @@ function renderCard(city, data, index) {
     </div>`;
 }
 
+function syncHourlyScroll() {
+  const strips = document.querySelectorAll(".forecast-hourly");
+  let syncing = false;
+  strips.forEach(strip => {
+    strip.addEventListener("scroll", () => {
+      if (syncing) return;
+      syncing = true;
+      const left = strip.scrollLeft;
+      strips.forEach(other => {
+        if (other !== strip) other.scrollLeft = left;
+      });
+      syncing = false;
+    });
+  });
+}
+
 function renderList() {
   if (!weatherData) return;
   const citiesEl = document.getElementById("cities");
@@ -253,6 +269,7 @@ function renderList() {
     html += renderCard(CITIES[i], weatherData[i], i);
   }
   citiesEl.innerHTML = html;
+  if (currentMode === "hourly") syncHourlyScroll();
 }
 
 // --- View switching ---
