@@ -169,7 +169,8 @@ function renderHourly(data) {
     const dt = new Date(hourly.time[i]);
     const hour = dt.getHours();
     const isNow = i === startIdx;
-    const label = isNow ? "Ahora" : `${hour}h`;
+    const ampm = hour === 0 ? "12am" : hour < 12 ? `${hour}am` : hour === 12 ? "12pm" : `${hour - 12}pm`;
+    const label = isNow ? "Ahora" : ampm;
     const dayBoundary = hour === 0 && !isNow;
     const w = getWeatherInfo(hourly.weather_code[i]);
     const precip = hourly.precipitation_probability[i];
@@ -220,8 +221,10 @@ function renderDaily(data) {
 
 function renderCard(city, data, index) {
   const current = data.current;
+  const daily = data.daily;
   const weather = getWeatherInfo(current.weather_code);
   const forecast = currentMode === "hourly" ? renderHourly(data) : renderDaily(data);
+  const precipToday = daily.precipitation_probability_max[0];
 
   return `
     <div class="city-card">
@@ -231,6 +234,7 @@ function renderCard(city, data, index) {
           <div class="city-name">${city.name}</div>
           <div class="current-meta">${weather.desc} · ST ${Math.round(current.apparent_temperature)}°</div>
           <div class="current-details">
+            <span>🌧️ ${precipToday}%</span>
             <span>💧 ${current.relative_humidity_2m}%</span>
             <span>💨 ${Math.round(current.wind_speed_10m)} km/h ${windDirection(current.wind_direction_10m)}</span>
           </div>
