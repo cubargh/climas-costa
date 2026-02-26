@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Climas de la Costa - Buenos Aires</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Clima actual y pronóstico extendido de todas las ciudades costeras de la provincia de Buenos Aires.">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>Climas de la Costa</h1>
+      <p class="subtitle">Provincia de Buenos Aires</p>
+    </div>
+  </header>
+
+  <main>
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Cargando datos meteorológicos...</p>
+    </div>
+    <div id="error" class="error hidden">
+      <p>Error al cargar los datos. <button onclick="loadWeather()">Reintentar</button></p>
+    </div>
+    <div id="cities" class="cities-grid"></div>
+  </main>
+
+  <footer>
+    <p>Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> &middot; Climas de la Costa</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
