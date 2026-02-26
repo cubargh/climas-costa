@@ -169,7 +169,7 @@ function renderHourly(data) {
     const dt = new Date(hourly.time[i]);
     const hour = dt.getHours();
     const isNow = i === startIdx;
-    const ampm = hour === 0 ? "12am" : hour < 12 ? `${hour}am` : hour === 12 ? "12pm" : `${hour - 12}pm`;
+    const ampm = hour === 0 ? "" : hour < 12 ? `${hour}am` : hour === 12 ? "12pm" : `${hour - 12}pm`;
     const label = isNow ? "Ahora" : ampm;
     const dayBoundary = hour === 0 && !isNow;
     const w = getWeatherInfo(hourly.weather_code[i]);
