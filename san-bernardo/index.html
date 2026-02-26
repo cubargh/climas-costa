@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clima de la Costa | Pronóstico en la costa de Buenos Aires</title>
-  <link rel="canonical" href="https://climadelacosta.com.ar/">
+  <title>Clima en San Bernardo | Pronóstico por hora y por día</title>
+  <link rel="canonical" href="https://climadelacosta.com.ar/san-bernardo">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0f1b2d">
+  <meta name="city-slug" content="san-bernardo">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
@@ -21,16 +22,16 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3848418952970070" crossorigin="anonymous"></script>
 
   <!-- SEO -->
-  <meta name="description" content="Clima de la costa atlántica de Buenos Aires. Pronóstico actual y extendido por hora y por día de Mar del Plata, Pinamar, Villa Gesell, Necochea, San Bernardo y todas las ciudades costeras. Temperatura del agua, olas, UV y más.">
+  <meta name="description" content="Pronóstico del clima en San Bernardo, costa atlántica de Buenos Aires. Temperatura actual, sensación térmica, humedad, viento, lluvia, índice UV, temperatura del agua y olas por hora y por día.">
   <meta name="keywords" content="clima de la costa, clima costa atlantica, clima mar del plata, clima pinamar, clima villa gesell, clima necochea, clima san bernardo, clima monte hermoso, clima miramar, pronóstico costa buenos aires, temperatura costa atlantica, tiempo en la costa, temperatura del agua costa atlantica, olas costa atlantica">
   <meta name="robots" content="index, follow">
   <meta name="author" content="Clima de la Costa">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Clima de la Costa - Buenos Aires">
-  <meta property="og:description" content="Pronóstico actual y extendido de todas las ciudades costeras de Buenos Aires. Temperatura del agua, olas, UV y más.">
+  <meta property="og:title" content="Clima en San Bernardo - Costa Atlántica">
+  <meta property="og:description" content="Pronóstico del clima en San Bernardo, costa atlántica de Buenos Aires. Temperatura actual, sensación térmica, humedad, viento, lluvia, índice UV, temperatura del agua y olas por hora y por día.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://climadelacosta.com.ar/">
+  <meta property="og:url" content="https://climadelacosta.com.ar/san-bernardo">
   <meta property="og:locale" content="es_AR">
   <meta property="og:site_name" content="Clima de la Costa">
   <meta property="og:image" content="https://climadelacosta.com.ar/og-image.png">
@@ -39,8 +40,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Clima de la Costa - Buenos Aires">
-  <meta name="twitter:description" content="Pronóstico actual y extendido de todas las ciudades costeras de Buenos Aires.">
+  <meta name="twitter:title" content="Clima en San Bernardo - Costa Atlántica">
+  <meta name="twitter:description" content="Pronóstico del clima en San Bernardo, costa atlántica de Buenos Aires. Temperatura actual, sensación térmica, humedad, viento, lluvia, índice UV, temperatura del agua y olas por hora y por día.">
   <meta name="twitter:image" content="https://climadelacosta.com.ar/og-image.png">
 
   <!-- Structured Data -->
@@ -68,6 +69,16 @@
       "price": "0",
       "priceCurrency": "ARS"
     }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://climadelacosta.com.ar/" },
+      { "@type": "ListItem", "position": 2, "name": "San Bernardo", "item": "https://climadelacosta.com.ar/san-bernardo" }
+    ]
   }
   </script>
 </head>
@@ -132,6 +143,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>
