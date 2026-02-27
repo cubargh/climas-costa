@@ -199,11 +199,6 @@ function init() {
   const retryBtn = document.querySelector("#error button");
   if (retryBtn) retryBtn.addEventListener("click", loadWeather);
 
-  const adClose = document.querySelector(".ad-close");
-  if (adClose) adClose.addEventListener("click", () => {
-    document.getElementById("mobile-ad-banner")?.remove();
-  });
-
   // Search toggle
   const searchToggleBtn = document.getElementById("btn-search-toggle");
   const searchBarEl = document.getElementById("search-bar");
